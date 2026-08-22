@@ -1,0 +1,27 @@
+[package]
+name = "epistola-crypto"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+description = "Olm (vodozemac) core for Epistola secret chats, shared by the Android and iOS clients over UniFFI."
+
+[lib]
+name = "epistola_crypto"
+# cdylib for Android (System.loadLibrary), staticlib for the iOS XCFramework,
+# lib so the test target and uniffi-bindgen can link it as an ordinary crate.
+crate-type = ["cdylib", "staticlib", "lib"]
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/bin/uniffi-bindgen.rs"
+
+[dependencies]
+thiserror = "2.0.20"
+uniffi = { version = "0.32.0", features = ["cli"] }
+vodozemac = "0.10.0"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+opt-level = "z"
