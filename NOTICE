@@ -1,0 +1,51 @@
+Epistola Crypto
+Copyright 2026 the Epistola authors
+
+  NOTE: replace the line above with the legal name of the copyright holder
+  before distributing.
+
+This product includes software developed as part of the Epistola project,
+licensed under the Apache License, Version 2.0 (see LICENSE).
+
+================================================================================
+Third-party components
+================================================================================
+
+--------------------------------------------------------------------------------
+UniFFI — Mozilla Public License 2.0
+--------------------------------------------------------------------------------
+
+    https://github.com/mozilla/uniffi-rs
+
+This crate links the UniFFI runtime (`uniffi`, `uniffi_core`, `uniffi_macros`,
+`uniffi_meta`, `uniffi_bindgen`, `uniffi_udl`, `uniffi_pipeline` and
+`uniffi_internal_macros`), which is licensed under the Mozilla Public License
+2.0. Its runtime is statically linked into every artifact this crate produces —
+`libepistola_crypto.so` and `libepistola_crypto.a` alike.
+
+The MPL is a file-level copyleft. Combining MPL-covered files with code under
+other licences in a Larger Work is expressly permitted (MPL 2.0 §3.3), so this
+crate's own source remains Apache-2.0; what MPL requires is this notice and that
+the source of the MPL-covered files stays available. It is, unmodified, at the
+URL above. A copy of the licence is at https://mozilla.org/MPL/2.0/.
+
+No UniFFI source file has been modified by this project.
+
+--------------------------------------------------------------------------------
+vodozemac — Apache License 2.0
+--------------------------------------------------------------------------------
+
+    https://github.com/matrix-org/vodozemac
+
+The Olm implementation this crate wraps. Apache-2.0, which is the reason this
+project could leave libsignal (AGPL-3.0) behind.
+
+--------------------------------------------------------------------------------
+Everything else
+--------------------------------------------------------------------------------
+
+The remainder of the dependency tree is MIT, Apache-2.0, BSD-2-Clause,
+BSD-3-Clause, Unlicense or Unicode-3.0 — in most cases dual-licensed MIT OR
+Apache-2.0. None is copyleft. Re-check with:
+
+    cargo metadata --format-version 1 --filter-platform aarch64-linux-android
