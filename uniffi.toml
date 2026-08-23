@@ -1,0 +1,11 @@
+# Kotlin bindings are only ever consumed by the Android client, so generate the
+# Android-flavoured cleaner.
+#
+# The default JVM template reaches for `java.lang.ref.Cleaner` behind a
+# `Class.forName` guard. That is safe at runtime but opaque to Android lint,
+# which reports three NewApi errors against minSdk 24 and fails the build. The
+# Android template guards on `Build.VERSION.SDK_INT` with `@RequiresApi`
+# instead — same fallback to the JNA cleaner on older devices, but expressed so
+# the toolchain can verify it rather than be told to ignore it.
+[bindings.kotlin]
+android = true

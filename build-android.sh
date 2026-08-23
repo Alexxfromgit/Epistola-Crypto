@@ -24,6 +24,7 @@ cargo build --release --lib
 rm -rf bindings/kotlin
 cargo run -q --bin uniffi-bindgen -- generate \
     --library "target/release/libepistola_crypto.dylib" \
+    --config uniffi.toml \
     --language kotlin --out-dir bindings/kotlin
 
 if [ -d "$APP/app/src/main" ]; then
