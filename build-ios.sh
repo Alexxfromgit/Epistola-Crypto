@@ -13,6 +13,9 @@ OUT="ios/EpistolaCrypto.xcframework"
 echo "==> building static libraries"
 cargo build --release --lib --target aarch64-apple-ios
 cargo build --release --lib --target aarch64-apple-ios-sim
+# A macOS slice as well, so the Swift package's tests can run with plain
+# `swift test` on the host instead of booting a simulator for every change.
+cargo build --release --lib --target aarch64-apple-darwin
 
 echo "==> generating Swift bindings"
 cargo build --release --lib
@@ -34,6 +37,8 @@ xcodebuild -create-xcframework \
     -library target/aarch64-apple-ios/release/libepistola_crypto.a \
     -headers ios/headers \
     -library target/aarch64-apple-ios-sim/release/libepistola_crypto.a \
+    -headers ios/headers \
+    -library target/aarch64-apple-darwin/release/libepistola_crypto.a \
     -headers ios/headers \
     -output "$OUT"
 
