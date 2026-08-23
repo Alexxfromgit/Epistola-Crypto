@@ -2,3 +2,8 @@
 /jniLibs
 /bindings
 /ios
+
+# Split out by build-android.sh; regenerated per build and uploaded to Play
+# by hand, so there is no reason to carry ~2.5 MB of it in the repo.
+/native-debug-symbols
+/native-debug-symbols.zip
