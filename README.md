@@ -108,3 +108,10 @@ Stripped, arm64-v8a:
 
 Apache-2.0, matching vodozemac. This is the point of the exercise: nothing here
 is AGPL, so the clients that link it need not be either.
+
+## Security
+
+This wrapper has not had an independent security audit. `vodozemac`, the Olm
+implementation it wraps, has. Nothing here modifies vodozemac's cryptographic
+code — this crate only adds the UniFFI boundary, pickling, and mutex
+serialisation around it — but treat the wrapper itself as unaudited.
