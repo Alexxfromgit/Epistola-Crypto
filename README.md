@@ -2,10 +2,11 @@
 
 Olm core for Epistola **secret chats**, shared by the Android and iOS clients.
 
-Wraps [vodozemac](https://github.com/matrix-org/vodozemac) (Apache-2.0) behind a
-UniFFI boundary so both platforms link the same crypto instead of each
-maintaining their own. Replaces libsignal, which is AGPL-3.0 and therefore
-cannot ship on the App Store by anyone who does not own its copyright.
+The Rust crate wraps [vodozemac](https://github.com/matrix-org/vodozemac)
+behind UniFFI. The [Android](https://github.com/Alexxfromgit/Epistola-Android)
+and [iOS](https://github.com/Alexxfromgit/Epistola-iOS) clients use generated
+Kotlin and Swift bindings to the same Olm implementation. Both client
+repositories are private.
 
 Cloud chats do not touch this crate at all — they are server-stored plaintext.
 This exists only for the opt-in, 1:1, device-bound secret chats.
@@ -43,14 +44,11 @@ Account.fromPickle(pickle, key)              .fromPickle(pickle, key)
   .createInboundSession(theirIdentityKey, message)
 ```
 
-### Two invariants, carried over from the libsignal implementation
+### Threading
 
-* **Native and blocking.** Nothing suspends; callers must already be off the
-  main thread.
-* **Not concurrency-safe** — except that now it is. Every object holds its own
-  `Mutex` on the Rust side, so serialisation is enforced here rather than
-  relying on the caller. The Kotlin `SessionManager` contract gets *stronger*
-  than it was under libsignal.
+- Calls are synchronous. Run them off the main thread.
+- Each `Account` and `Session` has its own Rust mutex to serialize operations
+  on that object.
 
 ### Persistence
 
@@ -65,16 +63,45 @@ state must be re-pickled:
 
 ## Building
 
-```bash
-cargo test                       # 9 tests, host only, no toolchain needed
+Install stable Rust with Cargo and rustup. Run host tests from the crate root.
+These tests use the host compiler and link no Android or iOS SDK.
 
-./build-android.sh               # .so for 3 ABIs + Kotlin binding, installed
-                                 # into ../../AndroidStudioProjects/Epistola
-./build-ios.sh                   # EpistolaCrypto.xcframework + Swift binding
+```bash
+cargo test --locked
 ```
 
-Android needs `cargo install cargo-ndk` and `ANDROID_NDK_HOME`. iOS needs the
-`aarch64-apple-ios` and `aarch64-apple-ios-sim` targets.
+### Android
+
+Run the mobile build on macOS. Install the Android NDK, point
+`ANDROID_NDK_HOME` at the installed NDK, and install `cargo-ndk` and the
+cross-compilation targets.
+
+```bash
+cargo install cargo-ndk
+rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android
+export ANDROID_NDK_HOME=/path/to/android/sdk/ndk/27.2.12479018
+./build-android.sh ../Epistola-Android
+```
+
+The script builds stripped libraries for `arm64-v8a`, `armeabi-v7a`, and
+`x86_64` under `jniLibs/` and generates Kotlin bindings under
+`bindings/kotlin/`. It copies them into the Android checkout supplied on the
+command line. Keep `native-debug-symbols.zip` with the release built from the
+same libraries for Play Console crash symbolication.
+
+### iOS and macOS host tests
+
+On macOS with Xcode installed and selected, add the Apple Rust targets and
+build the framework.
+
+```bash
+rustup target add aarch64-apple-ios aarch64-apple-ios-sim aarch64-apple-darwin
+./build-ios.sh
+```
+
+The script writes `ios/EpistolaCrypto.xcframework` and Swift bindings under
+`bindings/swift/`. The XCFramework contains arm64 slices for iOS devices,
+iOS Simulator, and macOS host tests.
 
 Bindings are generated from the *compiled host library's* embedded metadata, not
 from a `.udl` file, which is why both scripts do a host build before running
@@ -106,8 +133,8 @@ Stripped, arm64-v8a:
 
 ## Licence
 
-Apache-2.0, matching vodozemac. This is the point of the exercise: nothing here
-is AGPL, so the clients that link it need not be either.
+Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE) for the crate licence
+and third-party notices.
 
 ## Security
 
